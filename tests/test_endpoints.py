@@ -11,13 +11,15 @@ from sqlalchemy import create_engine
 
 from app.db import get_database_session
 from app.main import app
-from app.models import Organisation
+from app.models.organisation import Organisation
 
 _ALEMBIC_INI_PATH = Path(__file__).parent.parent / "alembic.ini"
+
 
 @pytest.fixture()
 def test_client() -> TestClient:
     return TestClient(app)
+
 
 @pytest.fixture(autouse=True)
 def apply_alembic_migrations() -> Generator[None, None, None]:
@@ -61,4 +63,4 @@ def test_organisation_endpoints(test_client: TestClient) -> None:
     # Validate that created organisations can be retried via API
     response = test_client.get("/api/organisations")
     organisations = set(organisation["name"] for organisation in response.json())
-    assert  set(organisations) == created_organisation_names
+    assert set(organisations) == created_organisation_names
